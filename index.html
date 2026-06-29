@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis XV Años | Gabriela Lizbeth</title>
+    <meta name="color-scheme" content="light only" />
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3871.786657683227!2d-89.71003162490571!3d13.971300686443884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTPCsDU4JzE2LjciTiA4OcKwNDInMjYuOCJX!5e0!3m2!1ses!2ssv!4v1782706939190!5m2!1ses!2ssv"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ================= MÚSICA DE FONDO (YouTube) ================= -->
+    <!-- Se reproduce desde YouTube de forma oficial (no se descarga el audio).
+     Cambia el ID en script.js (CONFIG.music.youtubeId) si quieres otra canción. -->
+    <div id="yt-player" class="yt-player-hidden" aria-hidden="true"></div>
+    <script src="https://youtu.be/6gcglaWuy9A?si=tgeBXCbIVWzcC6EV"></script>
+
+    <button
+      id="music-toggle"
+      class="music-btn"
+      aria-label="Reproducir o pausar música"
+      aria-pressed="false"
+    >
+      <svg
+        id="icon-note"
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        aria-hidden="true"
+      >
+        <path
+          fill="currentColor"
+          d="M9 17V5l11-1v12M9 17a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-1a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z"
+          stroke="currentColor"
+          stroke-width="1.4"
+          fill="none"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <svg
+        id="icon-pause"
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        aria-hidden="true"
+        hidden
+      >
+        <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" />
+        <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" />
+      </svg>
+    </button>
+
+    <!-- ================= PORTADA / SOBRE ================= -->
+    <div id="envelope-screen" class="envelope-screen">
+      <div class="envelope-scrim"></div>
+
+      <div
+        class="envelope"
+        id="envelope"
+        role="button"
+        tabindex="0"
+        aria-label="Abrir invitación"
+      >
+        <div class="envelope-body">
+          <div class="envelope-flap"></div>
+          <div class="envelope-seal">XV</div>
+          <p class="envelope-to">
+            Para: <span class="guest-name">Familia Invitada</span>
+          </p>
+        </div>
+      </div>
+
+      <p class="envelope-cta">Toca el sobre para abrir tu invitación</p>
+    </div>
+
+    <!-- ================= CONTENIDO PRINCIPAL ================= -->
+    <main id="main-content" class="invite-card" aria-hidden="true">
+      <!-- HERO -->
+      <header class="section hero">
+        <p class="eyebrow">— Mis —</p>
+        <h1 class="hero-title">XV<span class="hero-title-sm">años</span></h1>
+        <p class="hero-name" id="quince-name">Valentina Sofía</p>
+
+        <div class="pill-row">
+          <span class="pill" id="event-date">12 de diciembre, 2026</span>
+          <span class="pill pill-outline" id="event-time">4:30 PM</span>
+        </div>
+
+        <span class="paw-divider" aria-hidden="true">🐾 🐾 🐾</span>
+        <a class="scroll-cue" href="#verse" aria-label="Desplázate hacia abajo"
+          >▾</a
+        >
+      </header>
+
+      <!-- VERSÍCULO -->
+      <section class="section verse-section" id="verse">
+        <div class="speech-bubble">
+          <p class="verse-text" id="verse-text">
+            “Porque yo sé los planes que tengo para ti, planes de bienestar y no
+            de calamidad, a fin de darte un futuro y una esperanza.”
+          </p>
+          <p class="verse-ref" id="verse-ref">Jeremías 29:11</p>
+        </div>
+      </section>
+
+      <!-- MENSAJE -->
+      <section class="section message-section">
+        <span class="comic-tag">¡Te invito!</span>
+        <p class="message-text" id="invite-message">
+          Con la bendición de Dios y de mis padres, ha llegado el día que tanto
+          soñé. Quiero compartir contigo esta nueva etapa de mi vida, llena de
+          alegría, gratitud y muchas ganas de bailar. ¡Tu presencia hará este
+          día todavía más especial!
+        </p>
+        <p class="message-sign">
+          Con cariño, <span id="signature-name">Valentina</span> 🐾
+        </p>
+      </section>
+
+      <!-- CUENTA REGRESIVA -->
+      <section class="section countdown-section">
+        <h2 class="section-title">Faltan...</h2>
+        <div class="countdown" id="countdown">
+          <div class="time-box">
+            <span class="time-num" id="cd-days">00</span>
+            <span class="time-label">Días</span>
+          </div>
+          <div class="time-box">
+            <span class="time-num" id="cd-hours">00</span>
+            <span class="time-label">Horas</span>
+          </div>
+          <div class="time-box">
+            <span class="time-num" id="cd-mins">00</span>
+            <span class="time-label">Min</span>
+          </div>
+          <div class="time-box">
+            <span class="time-num" id="cd-secs">00</span>
+            <span class="time-label">Seg</span>
+          </div>
+        </div>
+        <p class="countdown-done" id="countdown-done" hidden>
+          ¡Hoy es el gran día! 🎉
+        </p>
+      </section>
+
+      <!-- GALERÍA -->
+      <section class="section gallery-section">
+        <h2 class="section-title">Momentos</h2>
+        <p class="section-sub">Desliza para ver más fotos</p>
+
+        <div class="gallery" id="gallery">
+          <div class="gallery-track" id="gallery-track">
+            <!-- Las imágenes se inyectan desde script.js (CONFIG.photos) -->
+          </div>
+          <button
+            class="gallery-arrow gallery-prev"
+            id="gallery-prev"
+            aria-label="Foto anterior"
+          >
+            ‹
+          </button>
+          <button
+            class="gallery-arrow gallery-next"
+            id="gallery-next"
+            aria-label="Foto siguiente"
+          >
+            ›
+          </button>
+        </div>
+        <div class="gallery-dots" id="gallery-dots"></div>
+      </section>
+
+      <!-- RSVP -->
+      <section class="section rsvp-section" id="rsvp">
+        <h2 class="section-title">Confirma tu asistencia</h2>
+        <p class="section-sub">
+          Por favor responde antes del
+          <span id="rsvp-deadline">28 de noviembre, 2026</span>
+        </p>
+
+        <form id="rsvp-form" class="rsvp-form" novalidate>
+          <label class="field">
+            <span>Tu nombre completo</span>
+            <input
+              type="text"
+              name="guestName"
+              required
+              placeholder="Ej. Ana Pérez"
+            />
+          </label>
+
+          <fieldset class="field radio-field">
+            <legend>¿Podrás acompañarme?</legend>
+            <label class="radio-pill">
+              <input type="radio" name="attendance" value="si" checked />
+              <span>¡Sí, ahí estaré! 🎉</span>
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="attendance" value="no" />
+              <span>No podré ir 💙</span>
+            </label>
+          </fieldset>
+
+          <label class="field" id="guests-field">
+            <span>Número de acompañantes (sin contarte a ti)</span>
+            <input
+              type="number"
+              name="guestsCount"
+              min="0"
+              max="10"
+              value="0"
+            />
+          </label>
+
+          <label class="field">
+            <span>¿Quieres dejarme un mensaje?</span>
+            <textarea
+              name="message"
+              rows="3"
+              placeholder="Escribe aquí tus buenos deseos..."
+            ></textarea>
+          </label>
+
+          <button type="submit" class="btn-primary">Enviar confirmación</button>
+        </form>
+
+        <div class="rsvp-thanks" id="rsvp-thanks" hidden>
+          <p class="thanks-title">
+            ¡Gracias, <span id="thanks-name">amig@</span>! 💙
+          </p>
+          <p id="thanks-msg">Tu confirmación fue recibida.</p>
+        </div>
+      </section>
+
+      <!-- UBICACIÓN -->
+      <section class="section location-section">
+        <h2 class="section-title">Ubicación</h2>
+        <p class="venue-address" id="venue-address">
+          Col. El Rosario, Calle al Arado, Casa #6, El Refugio, Ahuachapán
+        </p>
+
+        <div class="map-wrap">
+          <iframe
+            id="map-frame"
+            title="Mapa de la ubicación del evento"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3871.786657683227!2d-89.71003162490571!3d13.971300686443884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTPCsDU4JzE2LjciTiA4OcKwNDInMjYuOCJX!5e0!3m2!1ses!2ssv!4v1782706939190!5m2!1ses!2ssv"
+          >
+          </iframe>
+        </div>
+
+        <a
+          class="btn-primary btn-map"
+          id="map-link"
+          href="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3871.786657683227!2d-89.71003162490571!3d13.971300686443884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTPCsDU4JzE2LjciTiA4OcKwNDInMjYuOCJX!5e0!3m2!1ses!2ssv!4v1782706939190!5m2!1ses!2ssv"
+        >
+          Cómo llegar 📍
+        </a>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="section footer-section">
+        <span class="paw-divider" aria-hidden="true">🐾 🐾 🐾</span>
+        <p>Hecho con cariño para mis XV años</p>
+      </footer>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
