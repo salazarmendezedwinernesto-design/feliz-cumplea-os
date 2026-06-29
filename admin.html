@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmaciones RSVP | Panel de administración</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      :root {
+        --ink: #0b2545;
+        --blue-deep: #1b4f91;
+        --blue-mid: #2e86de;
+        --blue-pale: #eaf6ff;
+        --white: #ffffff;
+        --green: #1f9d55;
+        --red: #d64545;
+        --font-display: "Fredoka", sans-serif;
+        --font-body: "Quicksand", sans-serif;
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-body), system-ui, sans-serif;
+        background: var(--blue-pale);
+        color: var(--ink);
+        padding: 24px;
+      }
+
+      .wrap {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-family: var(--font-display), sans-serif;
+        font-size: 1.8rem;
+        margin: 0 0 4px;
+      }
+
+      .subtitle {
+        margin: 0 0 24px;
+        color: #45607f;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .stats {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .stat-card {
+        background: var(--white);
+        border: 2px solid var(--ink);
+        border-radius: var(--radius);
+        padding: 12px 18px;
+        min-width: 110px;
+        text-align: center;
+      }
+
+      .stat-card .num {
+        font-family: var(--font-display), sans-serif;
+        font-size: 1.6rem;
+        line-height: 1;
+        display: block;
+      }
+
+      .stat-card .label {
+        font-size: 0.78rem;
+        color: #45607f;
+      }
+
+      button {
+        font-family: var(--font-body), sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        padding: 10px 20px;
+        cursor: pointer;
+        background: var(--white);
+        color: var(--ink);
+        transition: transform 0.1s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button.primary {
+        background: var(--blue-mid);
+        color: var(--white);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .table-wrap {
+        background: var(--white);
+        border: 2px solid var(--ink);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+      }
+
+      th,
+      td {
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid #d8e8f7;
+      }
+
+      th {
+        background: var(--blue-deep);
+        color: var(--white);
+        font-family: var(--font-display), sans-serif;
+        font-weight: 500;
+        position: sticky;
+        top: 0;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover td {
+        background: #f3faff;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .pill.si {
+        background: #e3f7e9;
+        color: var(--green);
+      }
+
+      .pill.no {
+        background: #fdeaea;
+        color: var(--red);
+      }
+
+      .empty,
+      .loading,
+      .error {
+        text-align: center;
+        padding: 40px 20px;
+        color: #45607f;
+      }
+
+      .error {
+        color: var(--red);
+      }
+
+      .msg-cell {
+        max-width: 240px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      footer {
+        margin-top: 24px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #6c8aab;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>📋 Confirmaciones de asistencia</h1>
+      <p class="subtitle">Panel privado — comparte este enlace solo con quien organiza el evento.</p>
+
+      <div class="toolbar">
+        <div class="stats" id="stats">
+          <div class="stat-card">
+            <span class="num" id="stat-total">–</span>
+            <span class="label">Respuestas</span>
+          </div>
+          <div class="stat-card">
+            <span class="num" id="stat-si">–</span>
+            <span class="label">Sí asisten</span>
+          </div>
+          <div class="stat-card">
+            <span class="num" id="stat-no">–</span>
+            <span class="label">No asisten</span>
+          </div>
+          <div class="stat-card">
+            <span class="num" id="stat-guests">–</span>
+            <span class="label">Acompañantes</span>
+          </div>
+        </div>
+        <button class="primary" id="export-btn" disabled>⬇️ Exportar a Excel</button>
+        <button id="refresh-btn">🔄 Actualizar</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="rsvp-table" hidden>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Asistencia</th>
+              <th>Acompañantes</th>
+              <th>Mensaje</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="rsvp-tbody"></tbody>
+        </table>
+        <div class="loading" id="loading-msg">Cargando respuestas...</div>
+      </div>
+
+      <footer>Datos en vivo desde Firestore · Actualiza automáticamente</footer>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-init.js"></script>
+    <script>
+      let allRows = [];
+
+      function formatDate(iso) {
+        if (!iso) return "—";
+        try {
+          const d = new Date(iso);
+          return d.toLocaleString("es-SV", {
+            dateStyle: "short",
+            timeStyle: "short",
+          });
+        } catch {
+          return iso;
+        }
+      }
+
+      function renderRows(rows) {
+        const tbody = document.getElementById("rsvp-tbody");
+        const table = document.getElementById("rsvp-table");
+        const loadingMsg = document.getElementById("loading-msg");
+        const exportBtn = document.getElementById("export-btn");
+
+        if (rows.length === 0) {
+          table.hidden = true;
+          loadingMsg.textContent = "Todavía no hay confirmaciones.";
+          loadingMsg.className = "empty";
+          loadingMsg.hidden = false;
+          exportBtn.disabled = true;
+          updateStats(rows);
+          return;
+        }
+
+        loadingMsg.hidden = true;
+        table.hidden = false;
+        exportBtn.disabled = false;
+
+        tbody.innerHTML = rows
+          .map((r) => {
+            const pillClass = r.attendance === "si" ? "si" : "no";
+            const pillText = r.attendance === "si" ? "Sí asiste" : "No asiste";
+            const guests = r.attendance === "si" ? r.guestsCount || 0 : "—";
+            const msg = r.message ? escapeHtml(r.message) : "—";
+            return `<tr>
+              <td>${escapeHtml(r.guestName || "(Sin nombre)")}</td>
+              <td><span class="pill ${pillClass}">${pillText}</span></td>
+              <td>${guests}</td>
+              <td class="msg-cell">${msg}</td>
+              <td>${formatDate(r.createdAt)}</td>
+            </tr>`;
+          })
+          .join("");
+
+        updateStats(rows);
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function updateStats(rows) {
+        const total = rows.length;
+        const siRows = rows.filter((r) => r.attendance === "si");
+        const noRows = rows.filter((r) => r.attendance !== "si");
+        const totalGuests = siRows.reduce(
+          (sum, r) => sum + (parseInt(r.guestsCount, 10) || 0),
+          0,
+        );
+
+        document.getElementById("stat-total").textContent = total;
+        document.getElementById("stat-si").textContent = siRows.length;
+        document.getElementById("stat-no").textContent = noRows.length;
+        document.getElementById("stat-guests").textContent = totalGuests;
+      }
+
+      function showError(message) {
+        const loadingMsg = document.getElementById("loading-msg");
+        document.getElementById("rsvp-table").hidden = true;
+        loadingMsg.hidden = false;
+        loadingMsg.className = "error";
+        loadingMsg.textContent = message;
+      }
+
+      function loadRSVPs() {
+        if (!window.rsvpDb) {
+          showError(
+            "Firebase no está configurado. Revisa CONFIG.firebase en script.js y sigue FIREBASE-SETUP.md.",
+          );
+          return;
+        }
+
+        window.rsvpDb
+          .collection("rsvps")
+          .orderBy("createdAt", "desc")
+          .onSnapshot(
+            (snapshot) => {
+              allRows = snapshot.docs.map((doc) => doc.data());
+              renderRows(allRows);
+            },
+            (err) => {
+              console.error(err);
+              showError(
+                "No se pudieron cargar las respuestas. Revisa la consola para más detalles (puede ser un problema de reglas de Firestore).",
+              );
+            },
+          );
+      }
+
+      function exportToExcel() {
+        if (allRows.length === 0) return;
+
+        const exportData = allRows.map((r) => ({
+          Nombre: r.guestName || "",
+          Asistencia: r.attendance === "si" ? "Sí asiste" : "No asiste",
+          Acompañantes: r.attendance === "si" ? r.guestsCount || 0 : 0,
+          Mensaje: r.message || "",
+          Fecha: formatDate(r.createdAt),
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        ws["!cols"] = [
+          { wch: 26 },
+          { wch: 12 },
+          { wch: 14 },
+          { wch: 40 },
+          { wch: 18 },
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Confirmaciones");
+
+        const today = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `confirmaciones-rsvp-${today}.xlsx`);
+      }
+
+      document.getElementById("export-btn").addEventListener("click", exportToExcel);
+      document.getElementById("refresh-btn").addEventListener("click", loadRSVPs);
+
+      document.addEventListener("DOMContentLoaded", loadRSVPs);
+    </script>
+  </body>
+</html>

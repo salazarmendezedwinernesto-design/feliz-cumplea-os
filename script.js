@@ -22,9 +22,6 @@ const CONFIG = {
     "juntos una nueva etapa de mi vida. ¡Te espero con mucho cariño!",
   rsvp: {
     deadlineDisplay: "5 de julio, 2026",
-    // Pega aquí la URL que te da Google Apps Script al desplegar (ver google-sheets/INSTRUCCIONES.md)
-    sheetsWebAppUrl:
-      "https://script.google.com/macros/s/AKfycbzPZBxSoxMLU2hvA07WyPwiUe_T36M6sAeigqvCB01nTUSghwanpPocurXjN3TFA9RgaA/exec",
   },
   location: {
     address: "Col. El Rosario, Calle al Arado, Casa #6, El Refugio, Ahuachapán",
@@ -333,10 +330,9 @@ function initGallery() {
 
 /* =========================================================
    6. FORMULARIO DE CONFIRMACIÓN (RSVP)
-   Nota: este formulario no tiene backend todavía — al enviar
-   solo muestra un mensaje de agradecimiento en pantalla.
-   Para guardar las respuestas reales se necesita conectarlo
-   a un backend (Firebase, Google Sheets, EmailJS, etc.).
+   Las respuestas se guardan en Firestore (Firebase) en la
+   colección "rsvps". Ver FIREBASE-SETUP.md para configurarlo
+   y admin.html para ver/exportar las respuestas a Excel.
    ========================================================= */
 function initRSVP() {
   const form = document.getElementById("rsvp-form");
@@ -362,55 +358,67 @@ function initRSVP() {
     const guests = parseInt(data.get("guestsCount"), 10) || 0;
     const message = (data.get("message") || "").toString().trim();
 
-    sendRSVPToSheets({
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Enviando...";
+    }
+
+    sendRSVPToFirestore({
       guestName: name,
       attendance,
       guestsCount: guests,
       message,
-    });
+    })
+      .then(() => {
+        thanksName.textContent = name || "amig@";
 
-    thanksName.textContent = name || "amig@";
+        if (attendance === "si") {
+          thanksMsg.textContent =
+            guests > 0
+              ? `¡Qué alegría! Te esperamos junto con ${guests} acompañante(s) el ${CONFIG.event.dateDisplay}.`
+              : `¡Qué alegría! Nos vemos el ${CONFIG.event.dateDisplay}.`;
+        } else {
+          thanksMsg.textContent =
+            "Lamentamos que no puedas acompañarme, ¡pero te voy a tener presente! 💙";
+        }
 
-    if (attendance === "si") {
-      thanksMsg.textContent =
-        guests > 0
-          ? `¡Qué alegría! Te esperamos junto con ${guests} acompañante(s) el ${CONFIG.event.dateDisplay}.`
-          : `¡Qué alegría! Nos vemos el ${CONFIG.event.dateDisplay}.`;
-    } else {
-      thanksMsg.textContent =
-        "Lamentamos que no puedas acompañarme, ¡pero te voy a tener presente! 💙";
-    }
-
-    form.hidden = true;
-    thanksPanel.hidden = false;
+        form.hidden = true;
+        thanksPanel.hidden = false;
+      })
+      .catch((err) => {
+        console.error("RSVP: no se pudo guardar la confirmación.", err);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Enviar confirmación";
+        }
+        alert(
+          "No se pudo enviar tu confirmación. Verifica tu conexión a internet e inténtalo de nuevo.",
+        );
+      });
   });
 }
 
 /**
- * Envía la respuesta del RSVP a la Google Sheet (vía Apps Script).
- * Se usa mode:"no-cors" porque Apps Script no siempre permite leer la
- * respuesta desde el navegador; aun así el dato SÍ llega y se guarda,
- * solo que no podemos confirmar el éxito desde aquí (por eso el
- * mensaje de agradecimiento se muestra de inmediato, sin esperarlo).
+ * Envía la respuesta del RSVP a Firestore.
+ * Devuelve una promesa: se resuelve solo si el dato realmente se guardó,
+ * y se rechaza si algo falla, para poder avisarle al invitado.
  */
-function sendRSVPToSheets(payload) {
-  const url = CONFIG.rsvp.sheetsWebAppUrl;
-
-  if (!url || url.includes("PEGA_AQUI")) {
-    console.warn(
-      "RSVP: configura CONFIG.rsvp.sheetsWebAppUrl en script.js para guardar las respuestas en Google Sheets " +
-        "(instrucciones en google-sheets/INSTRUCCIONES.md). Por ahora la respuesta NO se está guardando.",
+function sendRSVPToFirestore(payload) {
+  if (!window.rsvpDb) {
+    return Promise.reject(
+      new Error(
+        "Firebase no está configurado. Revisa CONFIG.firebase en script.js y FIREBASE-SETUP.md.",
+      ),
     );
-    return;
   }
 
-  fetch(url, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload),
-  }).catch((err) => {
-    console.warn("RSVP: no se pudo enviar la respuesta a Google Sheets.", err);
+  return window.rsvpDb.collection("rsvps").add({
+    guestName: payload.guestName,
+    attendance: payload.attendance,
+    guestsCount: payload.guestsCount,
+    message: payload.message,
+    createdAt: new Date().toISOString(),
   });
 }
 
