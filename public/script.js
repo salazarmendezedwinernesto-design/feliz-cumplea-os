@@ -29,7 +29,7 @@ const CONFIG = {
     mapEmbedSrc:
       "https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3871.786657683227!2d-89.71003162490571!3d13.971300686443884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTPCsDU4JzE2LjciTiA4OcKwNDInMjYuOCJX!5e0!3m2!1ses!2ssv!4v1782706939190!5m2!1ses!2ssv",
     mapLinkUrl:
-      "https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3871.786657683227!2d-89.71003162490571!3d13.971300686443884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTPCsDU4JzE2LjciTiA4OcKwNDInMjYuOCJX!5e0!3m2!1ses!2ssv!4v1782706939190!5m2!1ses!2ssv",
+      "https://www.google.com/maps/dir/?api=1&destination=13.971300686443884,-89.71003162490571&travelmode=driving",
   },
   // Fotos personales (ya colocadas en assets/fotos/). Cambia el texto de "caption" si quieres.
   photos: [
@@ -269,12 +269,7 @@ function initGallery() {
     img.alt = photo.caption || `Foto ${i + 1}`;
     img.loading = "lazy";
 
-    const caption = document.createElement("figcaption");
-    caption.className = "gallery-caption";
-    caption.textContent = photo.caption || "";
-
     card.appendChild(img);
-    card.appendChild(caption);
     track.appendChild(card);
 
     const dot = document.createElement("span");
@@ -296,11 +291,13 @@ function initGallery() {
 
   prevBtn.addEventListener("click", () => {
     const current = getCurrentIndex();
-    scrollToCard(Math.max(0, current - 1));
+    const target = current - 1 < 0 ? cards.length - 1 : current - 1;
+    scrollToCard(target);
   });
   nextBtn.addEventListener("click", () => {
     const current = getCurrentIndex();
-    scrollToCard(Math.min(cards.length - 1, current + 1));
+    const target = current + 1 >= cards.length ? 0 : current + 1;
+    scrollToCard(target);
   });
 
   function getCurrentIndex() {
