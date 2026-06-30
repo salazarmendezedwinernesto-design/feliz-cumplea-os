@@ -25,11 +25,10 @@ const CONFIG = {
   },
   location: {
     address: "Col. El Rosario, Calle al Arado, Casa #6, El Refugio, Ahuachapán",
-    // Embed sin necesidad de API key. Cambia la dirección en la URL por la real si es distinta.
     mapEmbedSrc:
-      "https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3871.786657683227!2d-89.71003162490571!3d13.971300686443884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTPCsDU4JzE2LjciTiA4OcKwNDInMjYuOCJX!5e0!3m2!1ses!2ssv!4v1782706939190!5m2!1ses!2ssv",
+      "https://www.google.com/maps?q=13.971301,-89.707457&output=embed",
     mapLinkUrl:
-      "https://www.google.com/maps/dir/?api=1&destination=13.971300686443884,-89.71003162490571&travelmode=driving",
+      "https://www.google.com/maps/dir/?api=1&destination=13.971301,-89.707457&travelmode=driving",
   },
   // Fotos personales (ya colocadas en assets/fotos/). Cambia el texto de "caption" si quieres.
   photos: [
