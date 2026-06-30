@@ -198,11 +198,12 @@ document.addEventListener("DOMContentLoaded", () => {
 function setMusicUI(isPlaying) {
   musicState.playing = isPlaying;
   const btn = document.getElementById("music-toggle");
-  const iconNote = document.getElementById("icon-note");
+  const iconPlay = document.getElementById("icon-play");
   const iconPause = document.getElementById("icon-pause");
   if (!btn) return;
   btn.setAttribute("aria-pressed", String(isPlaying));
-  iconNote.hidden = isPlaying;
+  btn.classList.toggle("is-playing", isPlaying);
+  iconPlay.hidden = isPlaying;
   iconPause.hidden = !isPlaying;
 }
 

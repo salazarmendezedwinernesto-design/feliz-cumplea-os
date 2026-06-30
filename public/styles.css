@@ -721,6 +721,64 @@ button {
   align-items: center;
   justify-content: center;
   box-shadow: var(--ink-shadow-sm);
+  overflow: visible;
+}
+
+.music-btn svg {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.music-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--blue-mid);
+  opacity: 0;
+  transform: scale(1);
+}
+
+/* Mientras suena la música: anillo de onda pulsando + ícono que respira */
+.music-btn.is-playing {
+  animation: music-bob 1.6s ease-in-out infinite;
+}
+
+.music-btn.is-playing::before {
+  animation: music-pulse 1.6s ease-out infinite;
+}
+
+.music-btn.is-playing svg {
+  transform: scale(1.08);
+}
+
+@keyframes music-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes music-bob {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-btn.is-playing,
+  .music-btn.is-playing::before {
+    animation: none;
+  }
 }
 
 /* Reproductor de YouTube: presente en el DOM pero visualmente oculto (solo se usa el audio) */
