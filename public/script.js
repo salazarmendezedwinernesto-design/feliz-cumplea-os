@@ -40,13 +40,13 @@ const CONFIG = {
     { src: "assets/gaby 5.jpeg", caption: "" },
     {
       src: "assets/gaby 6.png",
-      caption: "Con mi hermana, siempre juntas",
+      caption: "",
     },
     {
       src: "assets/gaby 7.jpeg",
-      caption: "En mi primer evento especial",
+      caption: "",
     },
-    { src: "assets/gaby 8.jpeg", caption: "El recuerdo más pequeño" },
+    { src: "assets/gaby 8.jpeg", caption: "" },
   ],
   music: {
     // ID del video de YouTube que compartiste. Se reproduce embebido desde YouTube
