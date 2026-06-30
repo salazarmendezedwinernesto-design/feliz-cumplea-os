@@ -23,12 +23,16 @@
         box-sizing: border-box;
       }
 
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
       body {
         margin: 0;
         font-family: var(--font-body), system-ui, sans-serif;
         background: var(--blue-pale);
         color: var(--ink);
-        padding: 24px;
+        padding: 16px;
       }
 
       .wrap {
@@ -38,61 +42,71 @@
 
       h1 {
         font-family: var(--font-display), sans-serif;
-        font-size: 1.8rem;
+        font-size: 1.4rem;
         margin: 0 0 4px;
+        line-height: 1.2;
       }
 
       .subtitle {
-        margin: 0 0 24px;
+        margin: 0 0 18px;
         color: #45607f;
+        font-size: 0.88rem;
       }
 
       .toolbar {
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
         gap: 12px;
-        align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
 
       .stats {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
       }
 
       .stat-card {
         background: var(--white);
         border: 2px solid var(--ink);
         border-radius: var(--radius);
-        padding: 12px 18px;
-        min-width: 110px;
+        padding: 10px 12px;
         text-align: center;
       }
 
       .stat-card .num {
         font-family: var(--font-display), sans-serif;
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         line-height: 1;
         display: block;
       }
 
       .stat-card .label {
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         color: #45607f;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .toolbar-actions button {
+        flex: 1;
       }
 
       button {
         font-family: var(--font-body), sans-serif;
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         border: 2px solid var(--ink);
         border-radius: 999px;
-        padding: 10px 20px;
+        padding: 12px 16px;
         cursor: pointer;
         background: var(--white);
         color: var(--ink);
         transition: transform 0.1s ease;
+        -webkit-tap-highlight-color: transparent;
       }
 
       button:hover {
@@ -190,15 +204,120 @@
       footer {
         margin-top: 24px;
         text-align: center;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: #6c8aab;
+      }
+
+      /* =========================================================
+         MÓVIL — la tabla se convierte en tarjetas apiladas,
+         mucho más legibles que una tabla angosta con scroll.
+         ========================================================= */
+      @media (max-width: 640px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          position: absolute;
+          left: -9999px;
+        }
+
+        #rsvp-tbody tr {
+          background: var(--white);
+          border-bottom: 6px solid var(--blue-pale);
+          padding: 12px 14px;
+        }
+
+        #rsvp-tbody tr:last-child {
+          border-bottom: none;
+        }
+
+        #rsvp-tbody td {
+          border: none;
+          padding: 6px 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        #rsvp-tbody td::before {
+          content: attr(data-label);
+          font-family: var(--font-display), sans-serif;
+          font-weight: 500;
+          font-size: 0.72rem;
+          color: var(--blue-deep);
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          flex-shrink: 0;
+          padding-top: 2px;
+        }
+
+        #rsvp-tbody td:first-child {
+          font-family: var(--font-display), sans-serif;
+          font-size: 1.05rem;
+        }
+
+        .msg-cell {
+          max-width: 70%;
+          text-align: right;
+        }
+      }
+
+      @media (min-width: 641px) {
+        body {
+          padding: 24px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .toolbar {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .stats {
+          display: flex;
+          flex-wrap: wrap;
+        }
+
+        .stat-card {
+          min-width: 110px;
+        }
+
+        .stat-card .num {
+          font-size: 1.6rem;
+        }
+
+        .stat-card .label {
+          font-size: 0.78rem;
+        }
+
+        .toolbar-actions {
+          flex: none;
+        }
+
+        .toolbar-actions button {
+          flex: none;
+        }
       }
     </style>
   </head>
   <body>
     <div class="wrap">
       <h1>📋 Confirmaciones de asistencia</h1>
-      <p class="subtitle">Panel privado — comparte este enlace solo con quien organiza el evento.</p>
+      <p class="subtitle">
+        Panel privado — comparte este enlace solo con quien organiza el evento.
+      </p>
 
       <div class="toolbar">
         <div class="stats" id="stats">
@@ -219,8 +338,12 @@
             <span class="label">Acompañantes</span>
           </div>
         </div>
-        <button class="primary" id="export-btn" disabled>⬇️ Exportar a Excel</button>
-        <button id="refresh-btn">🔄 Actualizar</button>
+        <div class="toolbar-actions">
+          <button class="primary" id="export-btn" disabled>
+            ⬇️ Exportar a Excel
+          </button>
+          <button id="refresh-btn">🔄 Actualizar</button>
+        </div>
       </div>
 
       <div class="table-wrap">
@@ -290,11 +413,11 @@
             const guests = r.attendance === "si" ? r.guestsCount || 0 : "—";
             const msg = r.message ? escapeHtml(r.message) : "—";
             return `<tr>
-              <td>${escapeHtml(r.guestName || "(Sin nombre)")}</td>
-              <td><span class="pill ${pillClass}">${pillText}</span></td>
-              <td>${guests}</td>
-              <td class="msg-cell">${msg}</td>
-              <td>${formatDate(r.createdAt)}</td>
+              <td data-label="Nombre">${escapeHtml(r.guestName || "(Sin nombre)")}</td>
+              <td data-label="Asistencia"><span class="pill ${pillClass}">${pillText}</span></td>
+              <td data-label="Acompañantes">${guests}</td>
+              <td data-label="Mensaje" class="msg-cell">${msg}</td>
+              <td data-label="Fecha">${formatDate(r.createdAt)}</td>
             </tr>`;
           })
           .join("");
@@ -383,8 +506,12 @@
         XLSX.writeFile(wb, `confirmaciones-rsvp-${today}.xlsx`);
       }
 
-      document.getElementById("export-btn").addEventListener("click", exportToExcel);
-      document.getElementById("refresh-btn").addEventListener("click", loadRSVPs);
+      document
+        .getElementById("export-btn")
+        .addEventListener("click", exportToExcel);
+      document
+        .getElementById("refresh-btn")
+        .addEventListener("click", loadRSVPs);
 
       document.addEventListener("DOMContentLoaded", loadRSVPs);
     </script>

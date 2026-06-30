@@ -33,13 +33,13 @@ const CONFIG = {
   },
   // Fotos personales (ya colocadas en assets/fotos/). Cambia el texto de "caption" si quieres.
   photos: [
-    { src: "assets/gaby 1.jpeg", caption: "Mis primeros días 🌸" },
-    { src: "assets/gaby 2.jpeg", caption: "¡A jugar sin parar!" },
-    { src: "assets/gaby 3.jpeg", caption: "Calientita y sonriente" },
-    { src: "assets/gaby 4.jpeg", caption: "Traviesa desde bebé 😋" },
-    { src: "assets/gaby 5.jpeg", caption: "Mi primer gorrito" },
+    { src: "assets/gaby 1.jpeg", caption: "" },
+    { src: "assets/gaby 2.jpeg", caption: "" },
+    { src: "assets/gaby 3.jpeg", caption: "" },
+    { src: "assets/gaby 4.jpeg", caption: "" },
+    { src: "assets/gaby 5.jpeg", caption: "" },
     {
-      src: "assets/gaby 6.jpeg",
+      src: "assets/gaby 6.png",
       caption: "Con mi hermana, siempre juntas",
     },
     {
