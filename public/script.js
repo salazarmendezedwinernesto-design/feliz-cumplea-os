@@ -25,10 +25,11 @@ const CONFIG = {
   },
   location: {
     address: "Col. El Rosario, Calle al Arado, Casa #6, El Refugio, Ahuachapán",
+    // Embed sin necesidad de API key. Cambia la dirección en la URL por la real si es distinta.
     mapEmbedSrc:
-      "https://www.google.com/maps?q=13.971301,-89.707457&output=embed",
+      "https://www.google.com/maps?q=13.971278,-89.707556&output=embed",
     mapLinkUrl:
-      "https://www.google.com/maps/dir/?api=1&destination=13.971301,-89.707457&travelmode=driving",
+      "https://www.google.com/maps/dir/?api=1&destination=13.971278,-89.707556&travelmode=driving",
   },
   // Fotos personales (ya colocadas en assets/fotos/). Cambia el texto de "caption" si quieres.
   photos: [
@@ -332,18 +333,11 @@ function initGallery() {
    ========================================================= */
 function initRSVP() {
   const form = document.getElementById("rsvp-form");
-  const guestsField = document.getElementById("guests-field");
   const thanksPanel = document.getElementById("rsvp-thanks");
   const thanksName = document.getElementById("thanks-name");
   const thanksMsg = document.getElementById("thanks-msg");
 
   if (!form) return;
-
-  form.addEventListener("change", (e) => {
-    if (e.target.name === "attendance") {
-      guestsField.style.display = e.target.value === "no" ? "none" : "flex";
-    }
-  });
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -351,7 +345,6 @@ function initRSVP() {
     const data = new FormData(form);
     const name = (data.get("guestName") || "").toString().trim();
     const attendance = data.get("attendance");
-    const guests = parseInt(data.get("guestsCount"), 10) || 0;
     const message = (data.get("message") || "").toString().trim();
 
     const submitBtn = form.querySelector('button[type="submit"]');
@@ -363,17 +356,13 @@ function initRSVP() {
     sendRSVPToFirestore({
       guestName: name,
       attendance,
-      guestsCount: guests,
       message,
     })
       .then(() => {
         thanksName.textContent = name || "amig@";
 
         if (attendance === "si") {
-          thanksMsg.textContent =
-            guests > 0
-              ? `¡Qué alegría! Te esperamos junto con ${guests} acompañante(s) el ${CONFIG.event.dateDisplay}.`
-              : `¡Qué alegría! Nos vemos el ${CONFIG.event.dateDisplay}.`;
+          thanksMsg.textContent = `¡Qué alegría! Nos vemos el ${CONFIG.event.dateDisplay}.`;
         } else {
           thanksMsg.textContent =
             "Lamentamos que no puedas acompañarme, ¡pero te voy a tener presente! 💙";
@@ -412,7 +401,6 @@ function sendRSVPToFirestore(payload) {
   return window.rsvpDb.collection("rsvps").add({
     guestName: payload.guestName,
     attendance: payload.attendance,
-    guestsCount: payload.guestsCount,
     message: payload.message,
     createdAt: new Date().toISOString(),
   });

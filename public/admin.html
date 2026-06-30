@@ -333,10 +333,6 @@
             <span class="num" id="stat-no">–</span>
             <span class="label">No asisten</span>
           </div>
-          <div class="stat-card">
-            <span class="num" id="stat-guests">–</span>
-            <span class="label">Acompañantes</span>
-          </div>
         </div>
         <div class="toolbar-actions">
           <button class="primary" id="export-btn" disabled>
@@ -352,7 +348,6 @@
             <tr>
               <th>Nombre</th>
               <th>Asistencia</th>
-              <th>Acompañantes</th>
               <th>Mensaje</th>
               <th>Fecha</th>
             </tr>
@@ -410,12 +405,10 @@
           .map((r) => {
             const pillClass = r.attendance === "si" ? "si" : "no";
             const pillText = r.attendance === "si" ? "Sí asiste" : "No asiste";
-            const guests = r.attendance === "si" ? r.guestsCount || 0 : "—";
             const msg = r.message ? escapeHtml(r.message) : "—";
             return `<tr>
               <td data-label="Nombre">${escapeHtml(r.guestName || "(Sin nombre)")}</td>
               <td data-label="Asistencia"><span class="pill ${pillClass}">${pillText}</span></td>
-              <td data-label="Acompañantes">${guests}</td>
               <td data-label="Mensaje" class="msg-cell">${msg}</td>
               <td data-label="Fecha">${formatDate(r.createdAt)}</td>
             </tr>`;
@@ -435,15 +428,10 @@
         const total = rows.length;
         const siRows = rows.filter((r) => r.attendance === "si");
         const noRows = rows.filter((r) => r.attendance !== "si");
-        const totalGuests = siRows.reduce(
-          (sum, r) => sum + (parseInt(r.guestsCount, 10) || 0),
-          0,
-        );
 
         document.getElementById("stat-total").textContent = total;
         document.getElementById("stat-si").textContent = siRows.length;
         document.getElementById("stat-no").textContent = noRows.length;
-        document.getElementById("stat-guests").textContent = totalGuests;
       }
 
       function showError(message) {
@@ -485,19 +473,12 @@
         const exportData = allRows.map((r) => ({
           Nombre: r.guestName || "",
           Asistencia: r.attendance === "si" ? "Sí asiste" : "No asiste",
-          Acompañantes: r.attendance === "si" ? r.guestsCount || 0 : 0,
           Mensaje: r.message || "",
           Fecha: formatDate(r.createdAt),
         }));
 
         const ws = XLSX.utils.json_to_sheet(exportData);
-        ws["!cols"] = [
-          { wch: 26 },
-          { wch: 12 },
-          { wch: 14 },
-          { wch: 40 },
-          { wch: 18 },
-        ];
+        ws["!cols"] = [{ wch: 26 }, { wch: 12 }, { wch: 40 }, { wch: 18 }];
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Confirmaciones");
