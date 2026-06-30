@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "firebase": "^12.15.0"
+  },
+  "scripts": {
+    "build": "exit 0"
   }
 }
